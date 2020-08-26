@@ -3,5 +3,6 @@
 Web application for conducting online polls and surveys.
 
 ## Project Documents
-[Vision Statement](../../wiki/Vision Statement)
-[Requirement](../../wiki/Requirements)
+
+- [Requirements](../../ku-polls/wiki/Requirements)
+- [Vision Statement](../../ku-polls/wiki/Vision%20Statement)
