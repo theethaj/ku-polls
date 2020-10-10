@@ -65,5 +65,5 @@ def vote(request, question_id):
                 reverse('polls:results', args=(question.id,))
             )
         else:
-            messages.error(request, f"{Voting is not allowed.}")
+            messages.error(request, "Voting is not allowed.")
             return redirect('polls:index')
