@@ -8,11 +8,8 @@ services:
 git:
   depth: 1
 
-install:
-  - pip install -r requirements.txt
-
 script: 
-  - coverage run manage.py test polls
+  - - python -m unittest discover -p "*_test.py"
 
 after_script:
   - bash <(curl -s https://codecov.io/bash)
