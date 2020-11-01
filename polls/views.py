@@ -3,10 +3,14 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
-
 from django.contrib import messages
-
 from .models import Choice, Question
+from django.contrib.auth import user_logged_in, user_logged_out, user_login_failed
+from django.dispatch import receiver
+
+import logging
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger("polls")
 
 
 class IndexView(generic.ListView):
@@ -67,3 +71,39 @@ def vote(request, question_id):
         else:
             messages.error(request, "Voting is not allowed.")
             return redirect('polls:index')
+
+
+@receiver(user_logged_in)
+def throw_login(sender, **kwargs):
+    """
+    Appears when logging in successfully.
+    """
+    log.info("You have successfully logged in.")
+
+
+@receiver(user_logged_out)
+def throw_logout(sender, **kwargs):
+    """
+    Appears when logging out successfully.
+    """
+    log.info("You have successfully logged out.")
+
+
+@receiver(user_login_failed)
+def throw_login_failed(sender, credentials, **kwargs):
+    """
+    Appears when logging in unsuccessfully.
+    """
+    log.warning("You have unsuccessfully logged in.")
+
+
+def get_client_ip(request):
+    """
+    Get ip address from client.
+    """
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip

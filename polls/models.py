@@ -1,4 +1,5 @@
 import datetime
+import django.contrib.auth.models
 
 from django.db import models
 from django.utils import timezone
@@ -11,6 +12,7 @@ class Question(models.Model):
     question_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField('date published')
     end_date = models.DateTimeField('date ended')
+    current_vote = models.CharField(max_length=200)
 
     def __str__(self):
         """
@@ -34,14 +36,18 @@ class Question(models.Model):
         Check published question.
         """
         now = timezone.now()
-        return now >= self.pub_date
+        if now >= self.pub_date:
+            return True
+        return False
 
     def can_vote(self):
         """
         Check question which can be voted.
         """
         now = timezone.now()
-        return self.pub_date <= now <= self.end_date
+        if self.is_published() and now <= self.end_date:
+            return True
+        return False
 
 
 class Choice(models.Model):
@@ -57,3 +63,9 @@ class Choice(models.Model):
         Return choice text.
         """
         return self.choice_text
+
+
+class Vote(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
+    user = models.ForeignKey(django.contrib.auth.models.User, on_delete=models.CASCADE)
